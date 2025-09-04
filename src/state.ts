@@ -1,9 +1,6 @@
-import crypto from 'crypto';
-
 type UpdateCallback<T = any> = (value?: T) => T;
 type StateRecord<T = any> = {
   index: number;
-  id: string;
   value: T;
   update: (value: T | UpdateCallback) => void;
 };
@@ -16,44 +13,23 @@ class State {
   private render = this._render.bind(this);
 
   public records: Record<number, StateRecord> = {};
-  public state: Record<string, any> = {};
   public useState = this._useState.bind(this);
 
   private addRecord<T = any>(
     value: T,
   ): UseState<T> {
     const key = Object.keys(this.records).length;
-    const id = crypto.randomUUID();
-    const update = (value: T | UpdateCallback) => this.update<T>(id, value);
+    const update = (value: T | UpdateCallback) => this.update<T>(key, value);
 
-    this.records[key] = { index: key, id, value, update };
-    this.state[id] = value;
+    this.records[key] = { index: key, value, update };
 
     return [value, update];
-  }
-
-  private updateRecord<T = any>(
-    index: number,
-    value: T,
-  ): void {
-    this.records[index].value = value;
-  }
-
-  private getRecordById(id: string): StateRecord {
-    const [, record] = Object.entries(this.records).find(
-      ([, { id: recordId }]) => id === recordId
-    ) as [string, StateRecord];
-    return record;
-  }
-
-  private getRecord(index: number): StateRecord {
-    return this.records[index];
   }
 
   private _init<T = any>(
     value: T,
   ): UseState<T> {
-    const record = this.getRecord(this.recordIterator);
+    const record = this.records[this.recordIterator];
     this.recordIterator++;
 
     if (record) {
@@ -63,39 +39,27 @@ class State {
     }
   }
 
-  public init<T = any>(
-    value: T,
-  ): UseState<T> {
-    const id = crypto.randomUUID();
-    this.state[id] = value;
-    this.addRecord<T>(value);
-    const update = (value: T | UpdateCallback) => this.update<T>(id, value);
-    return [value, update];
-  }
-
   private _update<T = any>(
-    key: string,
+    key: number,
     value: T | UpdateCallback,
   ): void {
-    const record = this.getRecordById(key);
+    const record = this.records[key];
     const result = this._result(key, value);
     this.records[record.index].value = result;
-    this.state[key] = result;
     this.refresh();
   }
 
   private _callback<T = any>(
-    key: string,
+    key: number,
     cb: UpdateCallback,
   ): T {
-    const record = this.getRecordById(key);
+    const record = this.records[key];
     const current = record.value;
-    // const current = this.state[key];
     return cb(current);
   }
 
   private _result<T = any>(
-    key: string,
+    key: number,
     value: T | UpdateCallback,
   ): T {
     return typeof value === 'function'
@@ -113,7 +77,7 @@ class State {
   }
 
   public _render() {
-    const useState = <T = any>(value: T) => this._init(value);
+    const useState = this._useState.bind(this);
 
     const [alpha, setAlpha] = useState<boolean>(false);
     const [bravo, setBravo] = useState<number>(0);
