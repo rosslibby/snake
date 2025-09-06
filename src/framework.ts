@@ -1,11 +1,8 @@
-import { UseState } from '@/types';
+import { RenderProps } from '@/types';
 import { State } from '@/state';
+import { renderCallback } from './controls';
 
-type RenderProps = {
-  useState: <T = any>(value: T) => UseState<T>;
-};
-
-class Framework extends State {
+export class Framework extends State {
   public _render = this.render.bind(this);
 
   onRefresh() {
@@ -13,6 +10,14 @@ class Framework extends State {
   }
 
   public render({ useState }: RenderProps = this.utils) {
+    const [messages, setMessages] = useState<string[]>([]);
+    const addMessage = (message: string) => setMessages(
+      (prev) => [...prev, message]
+    );
+    console.log(`messages (${messages.length}):`, messages);
+    renderCallback(addMessage);
+  }
+  public __render({ useState }: RenderProps = this.utils) {
     const [alpha, setAlpha] = useState<boolean>(false);
     const [bravo, setBravo] = useState<number>(0);
     console.log(`[alpha::${alpha}]\n`);
