@@ -4,6 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
+    "test": "ts-node -r tsconfig-paths/register",
     "build": "tsc && tsc-alias",
     "dev": "nodemon --exec ts-node -r tsconfig-paths/register src/index.ts",
     "start": "node dist/index.js"

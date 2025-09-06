@@ -9,11 +9,36 @@ export type RenderProps = {
   useState: <T = any>(value: T) => UseState<T>;
 };
 
-// context api
-export type Context = Record<string, any>;
+// game
 export interface GameCtx {
+  // player
+  direction: string;
+  player: number[];
+
+  // state
   running: boolean;
   score: number;
   gameOver: boolean;
-  _: Record<string, any>;
+  food: number;
+
+  // settings
+  speed: number;
+  columns: number;
+  rows: number;
+  cells: number;
+
+  // dom
+  dom: {
+    // layout
+    root: Document;
+    container: HTMLDivElement;
+
+    // controls
+    pause: HTMLButtonElement;
+    start: HTMLButtonElement;
+
+    // interface
+    overlay: HTMLDivElement;
+    score: HTMLDivElement;
+  };
 }
