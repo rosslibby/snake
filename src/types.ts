@@ -1,3 +1,5 @@
+import crypto from 'crypto';
+
 export type UpdateCallback<T = any> = (value?: T) => T;
 export type StateEntry<T = any> = {
   index: number;
