@@ -11,8 +11,6 @@ export class State {
     useState: this._useState.bind(this),
   };
 
-  constructor() {}
-
   private addRecord<T = any>(
     value: T,
   ): UseState<T> {
