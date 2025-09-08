@@ -1,21 +1,17 @@
+import { Elements } from './types';
+import { elements } from './dom';
 import { Game, game } from './player';
 
-const grid = Array.from({ length: Game.cells }, (_, i) => i);
-const container = makeContainer();
+const { gameboard } = elements as Elements;
 
-function makeContainer() {
-  const el = document.createElement('div');
-  el.classList.add('container');
-  document.body.appendChild(el);
-  return el;
-}
+const grid = Array.from({ length: Game.cells }, (_, i) => i);
 
 function render() {
   const player = game.snake;
   const food = game.food;
 
   if (Game.running) {
-    Array.from(container.querySelectorAll('.cell'))
+    Array.from(gameboard.querySelectorAll('.cell'))
       .forEach((cell) => {
         const id = Number(cell.id);
 
@@ -33,13 +29,13 @@ function render() {
         }
       });
   } else {
-    resetGrid(container);
-    makeCells(container);
+    resetGrid(gameboard);
+    makeCells(gameboard);
   }
 }
 
-function resetGrid(container: HTMLDivElement) {
-  container.innerHTML = '';
+function resetGrid(gameboard: HTMLDivElement) {
+  gameboard.innerHTML = '';
 }
 
 function makeInnerCell(outer: HTMLDivElement) {
@@ -48,7 +44,7 @@ function makeInnerCell(outer: HTMLDivElement) {
   outer.appendChild(inner);
 }
 
-function makeCell(id: number, container: HTMLDivElement) {
+function makeCell(id: number, gameboard: HTMLDivElement) {
   const player = game.snake;
   const food = game.food;
 
@@ -63,11 +59,11 @@ function makeCell(id: number, container: HTMLDivElement) {
     makeInnerCell(outer);
   }
 
-  container.appendChild(outer);
+  gameboard.appendChild(outer);
 }
 
-function makeCells(container: HTMLDivElement) {
-  grid.forEach((i) => makeCell(i, container));
+function makeCells(gameboard: HTMLDivElement) {
+  grid.forEach((i) => makeCell(i, gameboard));
 }
 
 function styleRoot() {
