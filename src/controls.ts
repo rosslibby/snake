@@ -1,29 +1,41 @@
-import * as readline from 'readline';
+import { Direction } from './types';
+import { Game, game } from './player';
 
-export function renderCallback(
-  addMessage: (message: string) => void,
-): void {
-  let message = '';
-  process.stdin.on('keypress', (str: string, key: readline.Key) => {
-    if (key.name === 'return') {
-      addMessage(message);
-      console.log(`\n>> ${message}`);
-      message = '';
-    } else if ((key.ctrl && key.name === 'c') || key.name === 'escape') {
-      process.exit();
-    } else if (key.name === 'backspace' && message.length) {
-      message = message.substring(0, message.length - 1);
-    } else if (str) {
-      readline.clearLine(process.stdout, 0);
-      readline.cursorTo(process.stdout, 0);
-      message += str;
-      process.stdout.write(message);
+function handleKeys(e: KeyboardEvent) {
+  if (
+    (!Game.running && ['Enter', ' '].includes(e.key)) ||
+    (Game.running && e.key === 'Escape')
+  ) {
+    game.togglePlaying();
+  }
+
+  const direction = e.key.substring(5).toLowerCase();
+
+  if (
+    (
+      ['up', 'down'].includes(direction) &&
+      !['up', 'down'].includes(Game.direction)
+    ) ||
+    (
+      ['left', 'right'].includes(direction) &&
+      !['left', 'right'].includes(Game.direction)
+    )
+  ) {
+    if (!Game.running) {
+      game.togglePlaying();
     }
-  });
+
+    const keystrokeTime = Date.now();
+    const lastKeystroke = game.lastKeystroke();
+    game.addKeystroke(keystrokeTime);
+
+    const keystrokeDiff = keystrokeTime - lastKeystroke;
+    const wait = Math.max(Game.speed - keystrokeDiff, 0);
+
+    setTimeout(() => {
+      Game.direction = direction as Direction;
+    }, wait);
+  }
 }
 
-readline.emitKeypressEvents(process.stdin);
-
-if (process.stdin.isTTY) {
-  process.stdin.setRawMode(true);
-}
+document.addEventListener('keydown', handleKeys);
