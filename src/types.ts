@@ -20,3 +20,12 @@ export type AdditionalElementCreationOptions = {
 };
 export type CreateElementOptions = ElementCreationOptions &
   AdditionalElementCreationOptions;
+export type TreeNode = {
+  className?: string;
+  id?: string;
+  dataset?: Record<string, string>;
+  children?: TreeNode | TreeNode[];
+  parent?: string | HTMLElement;
+  tagName: keyof HTMLElementTagNameMap;
+  text?: string;
+};
