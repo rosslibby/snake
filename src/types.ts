@@ -10,3 +10,13 @@ export type Elements = {
   pauseButton: HTMLButtonElement;
   score: HTMLHeadingElement;
 };
+export type AdditionalElementCreationOptions = {
+  className?: string;
+  id?: string;
+  dataset?: Record<string, string>;
+  children?: HTMLElement | HTMLElement[];
+  parent?: string | HTMLElement;
+  text?: string;
+};
+export type CreateElementOptions = ElementCreationOptions &
+  AdditionalElementCreationOptions;

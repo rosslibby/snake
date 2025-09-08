@@ -1,14 +1,9 @@
+import { CreateElementOptions } from '@/types';
+
 export const elements: Record<string, HTMLElement> = {};
 export function createElement<K extends keyof HTMLElementTagNameMap>(
   tagName: K,
-  options: ElementCreationOptions & {
-    className?: string;
-    id?: string;
-    dataset?: Record<string, string>;
-    children?: HTMLElement | HTMLElement[];
-    parent?: string | HTMLElement;
-    text?: string;
-  } = {},
+  options: CreateElementOptions,
 ): HTMLElementTagNameMap[K] {
   const { children, className, dataset, id, parent, text, ...rest } = options;
   const el = document.createElement(tagName, rest);
