@@ -1,4 +1,4 @@
-import { CreateElementOptions } from '@/types';
+import { CreateElementOptions, TreeNode } from '@/types';
 
 export const elements: Record<string, HTMLElement> = {};
 export function createElement<K extends keyof HTMLElementTagNameMap>(
@@ -44,4 +44,17 @@ export function createElement<K extends keyof HTMLElementTagNameMap>(
   }
 
   return el;
+}
+
+export function domFromTree<K extends keyof HTMLElementTagNameMap>(
+  { tagName, children, ...rest }: TreeNode,
+): HTMLElementTagNameMap[K] {
+  if (children) {
+    children = Array.isArray(children) ? children : [children];
+  }
+
+  return createElement(tagName, {
+    ...rest,
+    children: children?.map(domFromTree),
+  }) as HTMLElementTagNameMap[K];
 }
